@@ -1,9 +1,9 @@
 
 from django.shortcuts import render
+from rest_framework import status
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from baikeApi.models import qiuShi
 from baikeApi.serializers import QiushiSerializer
 from baikeApi.spyderBaike import QiushiStory,SpyderQiushi
@@ -17,7 +17,7 @@ class JSONResponse(HttpResponse):
 			kwargs['content_type'] = 'application/json'
 			super(JSONResponse,self).__init__(content,**kwargs)
 
-@csrf_exempt
+@api_view(['GET','POST'])
 def  qiushi_list(request):
 	if request.method == 'GET':
 		spyder = SpyderQiushi()
@@ -26,23 +26,23 @@ def  qiushi_list(request):
 				newqiuShi.save()
 		qiushiList = qiuShi.objects.all()
 		serializer = QiushiSerializer(qiushiList,many=True)
-		return JSONResponse(serializer.data)
+		return Response(serializer.data)
 		# else:	
 		# 	print('NO')
 		# 	serializer = QiushiSerializer(qiushiList,many=True)
 		# 	return JSONResponse(serializer.data)
 	else:
-		return HttpResponse(status = 404)
+		return Response(status = status.HTTP_400_BAD_REQUEST)
 
-@csrf_exempt
+@api_view(['GET','POST'])
 def  qiushi_detail(request,pk):
 	try:
 		qiushi = qiuShi.objects.get(pk=pk)
 	except qiuShi.DoseNotExist:
-		return HttpResponse(status = 404)
+		return Response(status = status.HTTP_400_BAD_REQUEST)
 
 	if request.method == 'GET':
 		serializer = QiushiSerializer(qiushi)
-		return JSONResponse(serializer.data)
+		return Response(serializer.data)
 	else :
-		return HttpResponse(status = 404)
+		return Response(status = status.HTTP_400_BAD_REQUEST)
