@@ -12,6 +12,7 @@ class QuestionAdmin(admin.ModelAdmin):
 		(None,             {'fields' : ['question_text']}),
 		('Date information',{'fields' : ['pub_date'],'classes':['collapse']}),
 		]
+	
 	inlines = [ChoiceInline]
 
 admin.site.register(Question,QuestionAdmin)
